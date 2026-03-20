@@ -77,84 +77,78 @@
     </div>
 
     <script>
-        // Init WebSocket for KDS
-        const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
         const restaurantId = "{{ restaurant_id | default('demo') }}";
-        let ws;
 
-        function connectWs() {
-            ws = new WebSocket(`${wsProtocol}://${window.location.host}/ws/kds/${restaurantId}`);
-            
-            ws.onopen = () => {
+        async function fetchOrders() {
+            try {
+                const res = await fetch(`/api/kds/orders/${restaurantId}`);
+                if (!res.ok) return;
+                const data = await res.json();
+                
                 document.getElementById('status-dot').className = 'w-4 h-4 bg-green-500 rounded-full shadow-[0_0_10px_rgba(34,197,94,0.8)]';
-                document.getElementById('status-text').innerText = 'Live Syncing';
+                document.getElementById('status-text').innerText = 'Polling Live';
                 document.getElementById('status-text').classList.replace('text-gray-300', 'text-green-500');
-            };
 
-            ws.onmessage = (event) => {
-                const msg = JSON.parse(event.data);
-                if(msg.event === 'update') {
-                    if(msg.data.action === 'BUMP') {
-                        // Visually remove the ticket that got bumped
-                        const ticket = document.getElementById(`ticket-${msg.data.ticket_id}`);
-                        if(ticket) {
-                            ticket.querySelector('span.text-yellow-500').innerText = 'DONE';
-                            ticket.querySelector('span.text-yellow-500').className = 'bg-green-500/20 border border-green-500/50 text-green-500 text-sm px-3 py-1 rounded-full font-bold uppercase tracking-wide';
-                            ticket.classList.add('ticket-bump');
-                            setTimeout(() => ticket.remove(), 500);
-                        }
-                    } else if(msg.data.action === 'NEW_ORDER') {
-                        // Render incoming order box over WS
-                        let itemListHTML = msg.data.items.map(i => `
+                // Render only new orders not already in the DOM
+                data.orders.forEach(order => {
+                    if(!document.getElementById(`ticket-${order.id}`)) {
+                        let itemListHTML = order.items.map(i => `
                             <li class="flex justify-between items-center bg-gray-800/50 p-3 rounded-xl border-l-4 border-green-500">
                                 <span class="font-bold flex items-center gap-2"><span class="bg-gray-800 px-2 rounded">${i.quantity}x</span> ${i.name}</span>
                             </li>
                         `).join('');
 
                         let newHtml = `
-                        <div class="ticket bg-gray-900 border-2 border-[#BC2F32] p-6 rounded-2xl flex flex-col shadow-[0_0_15px_rgba(188,47,50,0.3)] animate-pulse" id="ticket-${msg.data.ticket_id}">
+                        <div class="ticket bg-gray-900 border-2 border-[#BC2F32] p-6 rounded-2xl flex flex-col shadow-[0_0_15px_rgba(188,47,50,0.3)] animate-pulse" id="ticket-${order.id}">
                             <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-4">
-                                <h2 class="text-3xl font-extrabold text-[#BC2F32]">Tab ${msg.data.table}</h2>
+                                <h2 class="text-3xl font-extrabold text-[#BC2F32]">Tab ${order.table_number}</h2>
                                 <span class="bg-yellow-500/20 border border-yellow-500/50 text-yellow-500 text-sm px-3 py-1 rounded-full font-bold uppercase tracking-wide">Cooking</span>
                             </div>
-                            <span class="text-gray-500 text-sm font-semibold mb-4 uppercase inline-block">Order #${msg.data.ticket_id.substring(0,8)}</span>
+                            <span class="text-gray-500 text-sm font-semibold mb-4 uppercase inline-block">Order #${order.id.substring(0,8)}</span>
                             <ul class="space-y-4 mb-8 text-xl font-medium">
                                 ${itemListHTML}
                             </ul>
-                            <button class="w-full bg-[#BC2F32] hover:bg-red-700 text-white font-extrabold py-5 rounded-2xl mt-auto text-2xl uppercase tracking-widest transition shadow-[0_0_15px_rgba(188,47,50,0.5)]" onclick="bumpTicket('${msg.data.ticket_id}')">Bump</button>
+                            <button class="w-full bg-[#BC2F32] hover:bg-red-700 text-white font-extrabold py-5 rounded-2xl mt-auto text-2xl uppercase tracking-widest transition shadow-[0_0_15px_rgba(188,47,50,0.5)] transform hover:-translate-y-1" onclick="bumpTicket('${order.id}')">Bump</button>
                         </div>`;
                         
                         document.getElementById('tickets-container').insertAdjacentHTML('afterbegin', newHtml);
                         setTimeout(() => {
-                            document.getElementById(`ticket-${msg.data.ticket_id}`).classList.remove('animate-pulse', 'border-[#BC2F32]', 'shadow-[0_0_15px_rgba(188,47,50,0.3)]');
-                            document.getElementById(`ticket-${msg.data.ticket_id}`).classList.add('border-gray-700', 'shadow-xl');
-                            document.querySelector(`#ticket-${msg.data.ticket_id} h2`).classList.remove('text-[#BC2F32]');
-                            document.querySelector(`#ticket-${msg.data.ticket_id} h2`).classList.add('text-white');
+                            let added = document.getElementById(`ticket-${order.id}`);
+                            if(added){
+                                added.classList.remove('animate-pulse', 'border-[#BC2F32]', 'shadow-[0_0_15px_rgba(188,47,50,0.3)]');
+                                added.classList.add('border-gray-700', 'shadow-xl');
+                                let addedH2 = added.querySelector(`h2`);
+                                if(addedH2){
+                                    addedH2.classList.remove('text-[#BC2F32]');
+                                    addedH2.classList.add('text-white');
+                                }
+                            }
                         }, 5000);
                     }
-                }
-            };
-
-            ws.onclose = () => {
+                });
+            } catch(e) {
                 document.getElementById('status-dot').className = 'w-4 h-4 bg-red-500 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]';
                 document.getElementById('status-text').innerText = 'Offline';
                 document.getElementById('status-text').classList.replace('text-green-500', 'text-gray-300');
-                // Reconnect loop if needed in prod
-                setTimeout(connectWs, 3000);
-            };
+            }
         }
 
-        connectWs();
+        if(restaurantId !== 'demo') {
+            setInterval(fetchOrders, 3000);
+            fetchOrders();
+        }
 
-        function bumpTicket(id) {
-            // Optimistic UI update
-            if(ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ action: "BUMP", ticket_id: id }));
-            } else {
-                // If WS is offline, allow manual bump for demo
-                const ticket = document.getElementById(`ticket-${id}`);
+        async function bumpTicket(id) {
+            const ticket = document.getElementById(`ticket-${id}`);
+            if(ticket) {
                 ticket.classList.add('ticket-bump');
                 setTimeout(() => ticket.remove(), 500);
+            }
+            
+            try {
+                await fetch(`/api/kds/bump/${id}`, { method: 'POST' });
+            } catch (e) {
+                console.error(e);
             }
         }
     </script>
