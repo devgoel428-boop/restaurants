@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Depends, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -55,27 +55,7 @@ def create_access_token(data: dict, expires_delta: timedelta):
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-class ConnectionManager:
-    def __init__(self):
-        # Dictionary mapping restaurant_id to a list of active WebSockets
-        self.active_connections: Dict[str, List[WebSocket]] = {}
 
-    async def connect(self, websocket: WebSocket, restaurant_id: str):
-        await websocket.accept()
-        if restaurant_id not in self.active_connections:
-            self.active_connections[restaurant_id] = []
-        self.active_connections[restaurant_id].append(websocket)
-
-    def disconnect(self, websocket: WebSocket, restaurant_id: str):
-        if restaurant_id in self.active_connections:
-            self.active_connections[restaurant_id].remove(websocket)
-
-    async def broadcast_to_restaurant(self, restaurant_id: str, message: dict):
-        if restaurant_id in self.active_connections:
-            for connection in self.active_connections[restaurant_id]:
-                await connection.send_json(message)
-
-manager = ConnectionManager()
 
 # --- OAUTH ROUTES ---
 
@@ -230,35 +210,36 @@ async def kds_display(request: Request, restaurant_id: str, db: Session = Depend
             pass
     return templates.TemplateResponse("kds_mobile.html", {"request": request, "restaurant_id": restaurant_id, "orders": active_orders})
 
-# --- WEBSOCKET FOR KDS (Kitchen Display System) ---
-@app.websocket("/ws/kds/{restaurant_id}")
-async def websocket_kds(websocket: WebSocket, restaurant_id: str):
-    await manager.connect(websocket, restaurant_id)
+# --- SERVERLESS KDS POLLING ROUTES ---
+@app.get("/api/kds/orders/{restaurant_id}")
+async def get_kds_orders(restaurant_id: str, db: Session = Depends(get_db)):
+    if restaurant_id == "demo":
+        return {"orders": []}
     try:
-        while True:
-            data = await websocket.receive_text()
-            payload = json.loads(data)
-            
-            # Update DB on BUMP
-            if payload.get("action") == "BUMP":
-                # Create a local db session inside WebSocket loop to commit changes
-                db = next(get_db())
-                try:
-                    ticket_id = payload.get("ticket_id")
-                    if ticket_id != "demo1":
-                        order = db.query(Order).filter(Order.id == uuid.UUID(ticket_id)).first()
-                        if order:
-                            order.status = "done"
-                            db.commit()
-                except Exception as e:
-                    print("Error updating DB on BUMP:", str(e))
-                finally:
-                    db.close()
-            
-            # Broadcast the layout to KDS boards
-            await manager.broadcast_to_restaurant(restaurant_id, {"event": "update", "data": payload})
-    except WebSocketDisconnect:
-        manager.disconnect(websocket, restaurant_id)
+        r_uuid = uuid.UUID(restaurant_id)
+        orders = db.query(Order).filter(Order.restaurant_id == r_uuid, Order.status == "pending").all()
+        return {"orders": [
+            {
+                "id": str(o.id),
+                "table_number": o.table_number,
+                "items": o.items
+            } for o in orders
+        ]}
+    except Exception:
+        return {"orders": []}
+
+@app.post("/api/kds/bump/{ticket_id}")
+async def bump_order(ticket_id: str, db: Session = Depends(get_db)):
+    if ticket_id == "demo1" or ticket_id == "demo":
+        return {"status": "success"}
+    try:
+        order = db.query(Order).filter(Order.id == uuid.UUID(ticket_id)).first()
+        if order:
+            order.status = "done"
+            db.commit()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Error bumping ticket")
+    return {"status": "success"}
 
 @app.post("/api/order/place")
 async def place_order(req: PlaceOrderReq, db: Session = Depends(get_db)):
@@ -278,15 +259,7 @@ async def place_order(req: PlaceOrderReq, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(order)
     
-    # Push live notification to KDS
-    ws_payload = {
-        "action": "NEW_ORDER",
-        "ticket_id": str(order.id),
-        "table": order.table_number,
-        "items": order.items,
-        "total": order.total_price
-    }
-    await manager.broadcast_to_restaurant(req.restaurant_id, {"event": "update", "data": ws_payload})
+
     
     return {"status": "success", "ticket_id": str(order.id)}
 
