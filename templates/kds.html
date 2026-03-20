@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KDS | QRSnap Kitchen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #fff; overflow: hidden; }
+        .ticket-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; padding: 1.5rem; }
+        .urgent-pulse { animation: pulse-red 2s infinite; }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="bg-zinc-900 border-b border-white/10 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+            <h1 class="text-2xl font-black tracking-tighter text-white">KITCHEN<span class="text-red-600">LIVE</span></h1>
+            <span class="bg-green-500/10 text-green-500 text-xs px-3 py-1 rounded-full border border-green-500/20 font-bold uppercase">Connected</span>
+        </div>
+        <div class="flex gap-6 items-center">
+            <div class="text-right">
+                <p class="text-[10px] text-zinc-500 uppercase font-bold">Active Orders</p>
+                <p class="text-xl font-bold">08</p>
+            </div>
+            <button class="bg-zinc-800 p-3 rounded-xl hover:bg-zinc-700 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 002.572-1.065z" />
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <div class="ticket-grid">
+
+        <div class="bg-zinc-900 border-t-8 border-green-500 rounded-xl flex flex-col h-[450px] shadow-2xl">
+            <div class="p-4 border-b border-white/5 flex justify-between items-start">
+                <div>
+                    <h2 class="text-3xl font-black italic">TABLE 12</h2>
+                    <p class="text-zinc-500 text-xs mt-1">Order #442 • 14:02</p>
+                </div>
+                <div class="bg-green-500 text-black px-3 py-1 rounded font-bold text-sm">02m</div>
+            </div>
+            <div class="flex-1 p-4 space-y-4 overflow-y-auto">

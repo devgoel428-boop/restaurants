@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRSnap Menu - Table {{ table }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body { background-color: #0A0A0A; color: #FFFFFF; font-family: 'Inter', sans-serif; }
+        .veg-indicator { width: 16px; height: 16px; border: 2px solid #22c55e; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+        .veg-indicator::after { content: ''; width: 8px; height: 8px; background-color: #22c55e; border-radius: 50%; }
+        .non-veg-indicator { width: 16px; height: 16px; border: 2px solid #ef4444; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+        .non-veg-indicator::after { content: ''; width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; }
+    </style>
+</head>
+<body class="pb-32 bg-[#0A0A0A]">
+    <!-- Mobile-First Header -->
+    <header class="p-5 border-b border-gray-800 sticky top-0 bg-[#0A0A0A]/90 backdrop-blur-md z-30 flex justify-between items-center shadow-md">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight">Your Order</h1>
+            <p class="text-gray-400 text-sm font-medium">Table {{ table }}</p>
+        </div>
+        <div class="text-xs bg-[#BC2F32]/20 border border-[#BC2F32]/50 px-3 py-1.5 rounded-full text-[#BC2F32] font-semibold flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-[#BC2F32] animate-pulse"></span>
+            Secured QR
+        </div>
+    </header>
+    
+    <main class="p-5 space-y-5">
+        {% for item in items %}
+        <div class="bg-gray-900 rounded-2xl p-5 flex justify-between items-center border border-gray-800 shadow-sm transition hover:border-gray-700">
+            <div class="flex-1">
+                <div class="flex items-center gap-3 mb-1">
+                    <div class="{{ 'veg-indicator' if item.is_veg else 'non-veg-indicator' }}"></div>
+                    <h2 class="text-lg font-bold">{{ item.name }}</h2>
+                </div>
+                <p class="text-gray-400 font-medium">₹{{ item.price }}</p>
+            </div>
+            
+            <button class="ml-4 bg-gray-800 border border-gray-700 text-white w-10 h-10 rounded-xl font-bold text-xl flex items-center justify-center hover:bg-[#BC2F32] hover:border-[#BC2F32] transition" onclick="addToCart('{{ item.name }}', {{ item.price }})">
+                +
+            </button>
+        </div>
+        {% endfor %}
+    </main>
+
+    <!-- Sticky View Cart Footer -->
+    <div class="fixed bottom-0 left-0 w-full bg-[#0A0A0A]/95 backdrop-blur-lg border-t border-gray-800 p-5 z-40 transform transition-transform translate-y-full" id="cart-footer">
+        <button class="w-full bg-[#BC2F32] hover:bg-red-700 text-white py-4 rounded-2xl font-bold text-lg flex justify-between items-center px-6 shadow-[0_0_20px_rgba(188,47,50,0.6)]" onclick="placeOrder()">
+            <span class="flex items-center gap-2"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> View Cart (<span id="cart-count">0</span>)</span>
+            <span id="cart-total">₹0</span>
+        </button>
+    </div>
+
+    <script>
+        let total = 0;
+        let count = 0;
+        let cartItems = [];
+        
+        function addToCart(name, price) {
+            total += price;
+            count += 1;
+            
+            // Push to memory array
+            let existing = cartItems.find(i => i.name === name);
+            if(existing) {
+                existing.quantity += 1;
+            } else {
+                cartItems.push({name: name, price: price, quantity: 1});
+            }
+            
+            document.getElementById('cart-total').innerText = '₹' + total;
+            document.getElementById('cart-count').innerText = count;
+            document.getElementById('cart-footer').classList.remove('translate-y-full');
+        }
+        
+        async function placeOrder() {
+            if(cartItems.length === 0) return;
+            const btn = document.querySelector('#cart-footer button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<span class="animate-pulse">Placing Order...</span>`;
+            
+            try {
+                const res = await fetch("/api/order/place", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                        restaurant_id: "{{ restaurant_id }}",
+                        table_number: "{{ table }}",
+                        items: cartItems,
+                        total_price: total
+                    })
+                });
+                
+                if(res.ok) {
+                    btn.innerHTML = `<span><svg class="w-6 h-6 inline mr-2 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Order Sent to Kitchen!</span>`;
+                    btn.classList.replace('bg-[#BC2F32]', 'bg-green-600');
+                    setTimeout(() => window.location.reload(), 2500);
+                } else {
+                    btn.innerHTML = `<span>Error Placing Order</span>`;
+                    setTimeout(() => btn.innerHTML = originalText, 2000);
+                }
+            } catch (err) {
+                alert('Connection error');
+                btn.innerHTML = originalText;
+            }
+        }
+    </script>
+</body>
+</html>

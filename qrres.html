@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRSnap | Premium Digital Dining</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;600&family=Hind:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        h1, h2 { font-family: 'Playfair Display', serif; }
+        body { font-family: 'Inter', sans-serif; background-color: #0F0F0F; }
+        .hindi-font { font-family: 'Hind', sans-serif; }
+        
+        /* Gradient Overlay for that 'Figma' Look */
+        .hero-gradient {
+            background: linear-gradient(to right, #0F0F0F 30%, rgba(15, 15, 15, 0.2) 100%);
+        }
+
+        /* Sliding Text Animation */
+        .slider-container { height: 1.2em; overflow: hidden; display: inline-block; vertical-align: bottom; }
+        .slider-text { display: block; animation: slide 6s infinite; }
+        @keyframes slide {
+            0%, 45% { transform: translateY(0); }
+            50%, 95% { transform: translateY(-1.2em); }
+            100% { transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-white selection:bg-red-600">
+
+    <nav class="fixed w-full z-50 bg-[#0F0F0F]/90 backdrop-blur-xl border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-[#BC2F32] rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(188,47,50,0.4)]">
+                    <span class="font-bold text-lg">QR</span>
+                </div>
+                <span class="text-2xl font-light tracking-widest uppercase">QR<span class="font-bold text-[#BC2F32]">Snap</span></span>
+            </div>
+            <div class="hidden md:flex items-center gap-10 text-sm uppercase tracking-widest font-medium text-white/70">
+                <a href="#" class="hover:text-[#BC2F32] transition">Solution</a>
+                <a href="#" class="hover:text-[#BC2F32] transition">Experience</a>
+                <a href="#" class="bg-[#BC2F32] text-white px-8 py-3 rounded-full hover:scale-105 transition-all shadow-lg">Partner With Us</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="relative min-h-screen flex items-center overflow-hidden">
+        <div class="absolute right-0 top-0 w-full md:w-2/3 h-full">
+            <img src="https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1600&q=80" 
+                 alt="Luxury Dining" 
+                 class="w-full h-full object-cover">
+            <div class="absolute inset-0 hero-gradient"></div>
+        </div>
+
+        <div class="relative max-w-7xl mx-auto px-6 pt-20 w-full">
+            <div class="max-w-2xl">
+                <div class="flex items-center gap-3 mb-8">
+                    <span class="w-12 h-[1px] bg-[#BC2F32]"></span>
+                    <span class="text-[#BC2F32] uppercase tracking-[0.3em] text-sm font-bold italic">The New Era of Hospitality</span>
+                </div>
+                
+                <h1 class="text-6xl md:text-8xl mb-8 leading-tight">
+                    Serve with <br>
+                    <span class="italic text-white/90 slider-container">
+                        <span class="slider-text">Intention.</span>
+                        <span class="slider-text hindi-font">नियत के साथ।</span>
+                    </span>
+                </h1>
+
+                <p class="text-lg text-white/50 mb-12 leading-relaxed font-light max-w-lg">
+                    Transform your menu into a cinematic experience. No apps. No friction. 
+                    <span class="text-white">Bas scan karein aur magic dekhein.</span>
+                </p>
+
+                <div class="flex flex-col sm:row gap-6">
+                    <button class="group flex items-center gap-4 text-white uppercase tracking-widest text-sm font-bold">
+                        <span class="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-[#BC2F32] group-hover:border-[#BC2F32] transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </span>
+                        View Our Concept
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-32 px-6 bg-[#0A0A0A]">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-20 items-center">
+            <div class="grid grid-cols-2 gap-4">
+                <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80" class="rounded-2xl grayscale hover:grayscale-0 transition-all duration-700" alt="Dish 1">
+                <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80" class="rounded-2xl mt-12 grayscale hover:grayscale-0 transition-all duration-700" alt="Dish 2">
+            </div>
+            <div>
+                <h2 class="text-5xl mb-8 leading-tight">Crafted for the <br><span class="text-[#BC2F32]">Modern Dhaba.</span></h2>
+                <p class="text-white/40 text-lg mb-10 leading-relaxed font-light">
+                    Your food is a work of art. Your ordering system should be too. QR codes that don't just work—they impress. 
+                </p>
+                <div class="space-y-6">
+                    <div class="flex justify-between items-end border-b border-white/10 pb-4">
+                        <span class="text-xl font-light">Digital Menu Design</span>
+                        <span class="text-[#BC2F32] font-bold">Included</span>
+                    </div>
+                    <div class="flex justify-between items-end border-b border-white/10 pb-4">
+                        <span class="text-xl font-light">AI Voice Commands</span>
+                        <span class="text-[#BC2F32] font-bold">Pro Feature</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

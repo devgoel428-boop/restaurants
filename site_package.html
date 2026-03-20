@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRSnap | Features & Pricing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        h2, h3 { font-family: 'Playfair Display', serif; }
+        body { font-family: 'Inter', sans-serif; background-color: #0F0F0F; color: white; }
+        .pricing-card:hover { border-color: #BC2F32; transform: translateY(-10px); }
+    </style>
+</head>
+<body>
+
+    <nav class="p-8 flex justify-between items-center max-w-7xl mx-auto">
+        <div class="text-2xl font-light tracking-widest uppercase">QR<span class="font-bold text-[#BC2F32]">Snap</span></div>
+        <a href="index.html" class="text-xs uppercase tracking-widest text-white/50 hover:text-white transition">Back to Home</a>
+    </nav>
+
+    <section class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="text-center mb-20">
+            <h2 class="text-5xl mb-4">Master your <span class="text-[#BC2F32]">Dining Floor.</span></h2>
+            <p class="text-white/40 max-w-xl mx-auto">Built for the hustle of Indian hospitality. Everything you need, nothing you don't.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-16 items-center mb-32">
+            <div>
+                <h3 class="text-3xl mb-6 italic">AI Voice Command Center</h3>
+                <p class="text-white/50 leading-relaxed mb-6 font-light">Don't open a laptop in a busy kitchen. Just speak to your dashboard. Update prices, mark items as "Sold Out," or run happy hour discounts with a single voice command.</p>
+                <ul class="space-y-4 text-sm font-medium text-white/80">
+                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#BC2F32] rounded-full"></span> Natural Language Processing</li>
+                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#BC2F32] rounded-full"></span> Instant Menu Updates</li>
+                </ul>
+            </div>
+            <div class="bg-white/5 p-8 rounded-3xl border border-white/10">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" class="rounded-xl opacity-80" alt="Analytics View">
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 bg-[#0A0A0A] px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl mb-4 italic text-[#BC2F32]">Pricing</h2>
+                <p class="text-white/40">Choose the plan that fits your growth.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="pricing-card p-10 rounded-3xl bg-[#121212] border border-white/5 transition-all duration-500">
+                    <h4 class="uppercase tracking-widest text-xs font-bold text-white/40 mb-4">Dhaba Starter</h4>
+                    <div class="text-4xl font-bold mb-6">₹999<span class="text-sm font-light text-white/30">/mo</span></div>
+                    <ul class="space-y-4 mb-10 text-sm text-white/60 font-light">
+                        <li>Up to 10 Tables</li>
+                        <li>Digital Menu</li>
+                        <li>Standard KDS</li>
+                        <li class="line-through opacity-30">AI Voice Commands</li>
+                    </ul>
+                    <button class="w-full py-4 rounded-full border border-white/20 hover:bg-white hover:text-black transition font-bold text-xs uppercase tracking-widest">Select Plan</button>
+                </div>
+
+                <div class="pricing-card p-10 rounded-3xl bg-[#121212] border-2 border-[#BC2F32] relative transition-all duration-500 shadow-[0_0_40px_rgba(188,47,50,0.2)]">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#BC2F32] text-white text-[10px] font-bold px-4 py-1 rounded-full uppercase tracking-tighter">Most Popular</div>
+                    <h4 class="uppercase tracking-widest text-xs font-bold text-[#BC2F32] mb-4">Resto Pro</h4>
+                    <div class="text-4xl font-bold mb-6">₹2,499<span class="text-sm font-light text-white/30">/mo</span></div>
+                    <ul class="space-y-4 mb-10 text-sm text-white/90 font-light">
+                        <li>Unlimited Tables</li>
+                        <li>Advanced Analytics</li>
+                        <li>AI Voice Commands</li>
+                        <li>Stripe Priority Support</li>
+                    </ul>
+                    <button class="w-full py-4 rounded-full bg-[#BC2F32] hover:bg-[#A3282B] text-white transition font-bold text-xs uppercase tracking-widest">Start 14-Day Trial</button>
+                </div>
+
+                <div class="pricing-card p-10 rounded-3xl bg-[#121212] border border-white/5 transition-all duration-500">
+                    <h4 class="uppercase tracking-widest text-xs font-bold text-white/40 mb-4">Chain Store</h4>
+                    <div class="text-4xl font-bold mb-2">Custom</div>
+                    <p class="text-xs text-white/30 mb-8 italic">For 5+ Locations</p>
+                    <ul class="space-y-4 mb-10 text-sm text-white/60 font-light">
+                        <li>Multi-Outlet Dashboard</li>
+                        <li>Custom API Access</li>
+                        <li>Dedicated Manager</li>
+                        <li>White-label Branding</li>
+                    </ul>
+                    <button class="w-full py-4 rounded-full border border-white/20 hover:bg-white hover:text-black transition font-bold text-xs uppercase tracking-widest">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-20 px-6 border-t border-white/5">
+        <div class="max-w-7xl mx-auto flex flex-col md:grow justify-between items-center gap-10">
+            <div class="text-center md:text-left">
+                <div class="text-2xl font-light tracking-widest uppercase mb-4">QR<span class="font-bold text-[#BC2F32]">Snap</span></div>
+                <p class="text-white/20 text-xs max-w-xs">Building the future of Indian hospitality. One scan at a time.</p>
+            </div>
+            <div class="flex gap-10 text-[10px] uppercase tracking-[0.2em] font-bold text-white/40">
+                <a href="#" class="hover:text-[#BC2F32]">Privacy</a>
+                <a href="#" class="hover:text-[#BC2F32]">Terms</a>
+                <a href="#" class="hover:text-[#BC2F32]">Twitter</a>
+                <a href="#" class="hover:text-[#BC2F32]">LinkedIn</a>
+            </div>
+            <p class="text-[10px] text-white/10 italic">© 2026 QRSnap Technologies Pvt Ltd.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

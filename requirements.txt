@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+passlib[bcrypt]
+python-jose[cryptography]
+websockets
+jinja2
+openai
+python-dotenv
+authlib
+httpx
+qrcode[pil]
