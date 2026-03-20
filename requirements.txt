@@ -3,7 +3,7 @@ uvicorn
 sqlalchemy
 psycopg2-binary
 passlib[bcrypt]
-python-jose[cryptography]
+python-jose
 websockets
 jinja2
 openai
