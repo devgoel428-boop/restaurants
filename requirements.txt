@@ -11,3 +11,4 @@ python-dotenv
 authlib
 httpx
 qrcode[pil]
+itsdangerous
