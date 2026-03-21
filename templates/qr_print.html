@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QR Codes - {{ restaurant_name }}</title>
+  <style>
+    @media print {
+      @page { margin: 0.5cm; }
+      body { margin: 0; padding: 0; }
+    }
+    body { font-family: Arial, sans-serif; }
+    .qr-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 20px; }
+    .qr-card { border: 2px solid #BC2F32; border-radius: 10px; padding: 15px; text-align: center; page-break-inside: avoid; }
+    .qr-card h2 { margin: 0 0 10px; color: #BC2F32; }
+    .qr-card img { max-width: 200px; height: auto; }
+    .restaurant-name { text-align: center; padding: 20px; font-size: 24px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="restaurant-name">{{ restaurant_name }}</div>
+  <div class="qr-grid">
+    {% for table in tables %}
+    <div class="qr-card">
+      <h2>Table {{ table.number }}</h2>
+      <img src="data:image/png;base64,{{ table.qr }}" alt="QR Code for Table {{ table.number }}">
+    </div>
+    {% endfor %}
+  </div>
+</body>
+</html>
