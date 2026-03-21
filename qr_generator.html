@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Generator - QRSnap</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #0A0A0A; color: #FFFFFF; font-family: 'Inter', sans-serif; }
+        .nav-link { transition: all 0.2s; border-left: 3px solid transparent; padding-left: 10px; }
+        .nav-link:hover, .nav-link.active { border-left-color: #BC2F32; color: white; background: rgba(255,255,255,0.03); }
+        .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+    </style>
+</head>
+<body class="flex min-h-screen">
+    <aside class="w-64 border-r border-gray-800 py-6 flex flex-col bg-[#050505] shadow-xl z-20">
+        <h2 class="text-3xl font-extrabold mb-10 tracking-wider px-6">QR<span class="text-[#BC2F32]">Snap</span></h2>
+        <nav class="space-y-2 flex-grow">
+            <a href="/dashboard" class="nav-link flex items-center gap-3 text-gray-400 font-medium text-lg py-2">
+                <svg class="w-5 h-5 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                Overview
+            </a>
+            <a href="/kds/{{ restaurant_id }}" target="_blank" class="nav-link flex items-center gap-3 text-gray-400 font-medium text-lg py-2">
+                <svg class="w-5 h-5 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Live KDS
+            </a>
+            <a href="/menu-manager" class="nav-link flex items-center gap-3 text-gray-400 font-medium text-lg py-2">
+                <svg class="w-5 h-5 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                Menu Manager
+            </a>
+            <a href="/qr-generator" class="nav-link active flex items-center gap-3 text-white font-semibold text-lg py-2">
+                <svg class="w-5 h-5 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                QR Generator
+            </a>
+        </nav>
+        <div class="mt-auto pt-6 border-t border-gray-800 px-6">
+            <p class="text-gray-500 text-xs uppercase tracking-widest font-bold mb-1">PRO PLAN</p>
+            <p class="text-gray-400 text-sm truncate">{{ restaurant_name }}</p>
+        </div>
+    </aside>
+    
+    <main class="flex-grow p-10 bg-gradient-to-b from-[#0A0A0A] to-[#050505] overflow-y-auto h-screen relative flex flex-col items-center justify-center">
+        
+        <div class="max-w-2xl w-full text-center mb-10">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-500/10 text-red-500 mb-6">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            </div>
+            <h1 class="text-4xl font-extrabold mb-4">Bulk QR Export</h1>
+            <p class="text-gray-400 text-lg">Generate beautifully styled, secure QR codes for all your tables in one click. Ready to print, frame, and place instantly.</p>
+        </div>
+
+        <div class="glass-card rounded-3xl p-10 max-w-md w-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t border-t-[#BC2F32]/50 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-[#BC2F32] rounded-full blur-[60px] opacity-20"></div>
+            
+            <form onsubmit="generatePDF(event)" class="relative z-10">
+                <div class="mb-8">
+                    <label class="block text-gray-300 font-semibold mb-3">How many tables do you have?</label>
+                    <div class="relative">
+                        <input type="number" id="tableCount" min="1" max="100" value="20" class="w-full bg-[#050505] border border-gray-700 text-white rounded-xl px-4 py-4 text-2xl font-black text-center focus:border-[#BC2F32] focus:ring-1 focus:ring-[#BC2F32] outline-none transition shadow-inner">
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">Tables</div>
+                    </div>
+                    <p class="text-gray-500 text-sm mt-3 text-center">We'll generate codes numbered from 1 to your total.</p>
+                </div>
+
+                <button type="submit" class="w-full bg-[#BC2F32] hover:bg-red-700 text-white font-extrabold text-lg py-4 rounded-xl transition shadow-[0_0_20px_rgba(188,47,50,0.4)] hover:shadow-[0_0_30px_rgba(188,47,50,0.6)] flex items-center justify-center gap-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    Generate Printable PDF
+                </button>
+            </form>
+        </div>
+
+    </main>
+
+    <script>
+        function generatePDF(e) {
+            e.preventDefault();
+            const count = document.getElementById('tableCount').value;
+            if(!count || count < 1) return;
+            // Open print view in new tab
+            window.open(`/print-qr?count=${count}`, '_blank');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | QRSnap Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #080808; color: white; }
+        .card { background-color: #121212; border: 1px solid rgba(255,255,255,0.05); }
+    </style>
+</head>
+<body class="flex h-screen">
+
+    <aside class="w-64 bg-[#0F0F0F] border-r border-white/5 p-6 flex flex-col">
+        <div class="text-xl font-bold mb-12">QR<span class="text-[#BC2F32]">Snap</span></div>
+        <nav class="space-y-4">
+            <a href="/dashboard" class="block text-white/50 hover:text-white">Overview</a>
+            <a href="/menu-manager" class="block text-white/50 hover:text-white">Menu Manager</a>
+            <a href="/settings" class="block text-[#BC2F32] font-bold">Settings</a>
+        </nav>
+    </aside>
+
+    <main class="flex-1 p-12 overflow-y-auto">
+        <h1 class="text-3xl font-bold mb-8">Account Settings</h1>
+
+        <div class="max-w-2xl space-y-8">
+            <section class="card rounded-2xl p-8">
+                <h2 class="text-xl font-bold mb-6">Restaurant Profile</h2>
+                <form action="/api/settings/update" method="POST" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-white/40 uppercase mb-2">Restaurant Name</label>
+                        <input type="text" name="restaurant_name" value="{{ restaurant_name }}" 
+                               class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-[#BC2F32]">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-white/40 uppercase mb-2">Owner Email</label>
+                        <input type="email" value="{{ email }}" disabled 
+                               class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white/30 cursor-not-allowed">
+                    </div>
+                    <button type="submit" class="bg-[#BC2F32] px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#A3282B] transition">
+                        Save Changes
+                    </button>
+                </form>
+            </section>
+
+            <section class="card rounded-2xl p-8 border-t-4 border-[#BC2F32]">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold">Subscription Plan</h2>
+                        <p class="text-white/40 text-sm mt-1">Currently on the <span class="text-white font-bold">Free Tier</span></p>
+                    </div>
+                    <span class="bg-[#BC2F32]/10 text-[#BC2F32] px-3 py-1 rounded-full text-[10px] font-bold uppercase">Action Required</span>
+                </div>
+                
+                <div class="bg-white/5 rounded-xl p-6 mb-6">
+                    <ul class="text-sm space-y-3 text-white/60">
+                        <li class="flex items-center gap-2">✅ Up to 10 Tables</li>
+                        <li class="flex items-center gap-2">✅ Digital Menu Manager</li>
+                        <li class="flex items-center gap-2 text-white/20">❌ Peak Hour Analytics (Pro Only)</li>
+                        <li class="flex items-center gap-2 text-white/20">❌ WhatsApp Alerts (Pro Only)</li>
+                    </ul>
+                </div>
+
+                <button type="button" class="w-full bg-white text-black py-4 rounded-xl font-black text-xs tracking-widest uppercase hover:bg-zinc-200 transition">
+                    Upgrade to Pro — ₹2,499/mo
+                </button>
+            </section>
+        </div>
+    </main>
+</body>
+</html>

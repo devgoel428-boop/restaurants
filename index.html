@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRSnap - Modern Restaurant OS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #050505; color: #FFFFFF; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .crimson-accent { color: #BC2F32; }
+        .bg-crimson { background-color: #BC2F32; }
+        .glass-nav { background: rgba(5, 5, 5, 0.7); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .gradient-text { background: linear-gradient(90deg, #fff, #a1a1aa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* Pricing Switch Toggle */
+        .toggle-checkbox:checked { right: 0; border-color: #BC2F32; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #BC2F32; }
+        .toggle-checkbox:checked + .toggle-label:after { transform: translateX(100%); }
+        .toggle-label:after { content: ""; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background-color: white; border-radius: 50%; transition: transform 0.3s; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen relative">
+    <!-- Ambient Glow -->
+    <div class="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#BC2F32] rounded-full blur-[150px] opacity-20 pointer-events-none"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#BC2F32] rounded-full blur-[150px] opacity-15 pointer-events-none"></div>
+
+    <nav class="glass-nav p-5 px-8 flex justify-between items-center sticky top-0 z-50">
+        <div class="text-2xl font-extrabold tracking-wider">QR<span class="crimson-accent">Snap</span></div>
+        <div class="hidden md:flex gap-8 text-sm font-medium text-gray-400">
+            <a href="#features" class="hover:text-white transition">Features</a>
+            <a href="#pricing" class="hover:text-white transition">Pricing</a>
+        </div>
+        <a href="/auth/login/google" class="bg-white text-black hover:bg-gray-200 px-5 py-2 rounded-full font-semibold transition text-sm">Merchant Login</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="flex-grow flex flex-col items-center justify-center text-center p-8 pt-32 pb-20 z-10">
+        <div class="inline-flex items-center gap-2 bg-gray-900 border border-gray-800 text-gray-300 px-4 py-1.5 rounded-full text-xs font-semibold mb-8 uppercase tracking-widest">
+            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> QRSnap 2.0 is Live
+        </div>
+        
+        <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight tracking-tight max-w-4xl mx-auto">
+            <span class="gradient-text">Customer Khush,</span> <br>
+            <span class="crimson-accent relative inline-block mt-2">
+                Aap Tension-Free.
+            </span>
+        </h1>
+        
+        <p class="text-xl md:text-2xl text-gray-400 mb-10 max-w-2xl font-medium">
+            The all-in-one OS for Desi Restaurants. Instant QR Menus, Live KDS, and AI-powered Voice Commands.
+        </p>
+        
+        <div class="flex flex-col sm:flex-row gap-4">
+            <a href="/order/demo?table=1&sig=demo" target="_blank" class="bg-crimson hover:bg-red-700 text-white text-lg px-8 py-3.5 rounded-full font-bold transition transform hover:-translate-y-1 shadow-[0_10px_30px_rgba(188,47,50,0.3)] flex items-center gap-2 justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Try it Now (Live Demo)
+            </a>
+            <a href="/auth/login/google" class="glass-card hover:bg-white/10 text-white text-lg px-8 py-3.5 rounded-full font-bold transition flex items-center justify-center">Start for Free</a>
+        </div>
+    </main>
+
+    <!-- Social Proof Section -->
+    <section class="py-12 border-y border-gray-900 bg-[#0A0A0A] relative z-10 w-full overflow-hidden">
+        <p class="text-center text-gray-500 text-sm font-semibold tracking-widest uppercase mb-8">Trusted by 100+ Top Restaurants</p>
+        <div class="flex justify-center flex-wrap gap-12 opacity-50 grayscale hover:grayscale-0 transition duration-500">
+            <!-- Mock Logos (Using text for now, can be replaced with SVGs) -->
+            <div class="text-2xl font-black italic">The Great Indian</div>
+            <div class="text-2xl font-black font-serif">PIND BALLUCHI</div>
+            <div class="text-2xl font-black tracking-tighter">Bikanervala</div>
+            <div class="text-2xl font-black">Haldiram's</div>
+        </div>
+    </section>
+
+    <!-- Features Overview -->
+    <section id="features" class="py-24 max-w-6xl mx-auto px-6 z-10">
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="glass-card p-8 rounded-3xl relative overflow-hidden group">
+                <div class="w-12 h-12 bg-red-500/10 text-red-500 rounded-xl flex items-center justify-center mb-6 border border-red-500/20">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-white">Bulk QR PDF Generator</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Generate 50+ beautiful, print-ready QR codes with your restaurant logo in one click. No more manual link copying.</p>
+            </div>
+            <div class="glass-card p-8 rounded-3xl relative overflow-hidden group">
+                <div class="w-12 h-12 bg-blue-500/10 text-blue-500 rounded-xl flex items-center justify-center mb-6 border border-blue-500/20">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-white">Instant Stock Kill-Switch</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Ran out of Paneer? Flip a toggle on the dashboard and it vanishes from all customer phones instantly. Zero app updates required.</p>
+            </div>
+            <div class="glass-card p-8 rounded-3xl relative overflow-hidden group">
+                <div class="w-12 h-12 bg-green-500/10 text-green-500 rounded-xl flex items-center justify-center mb-6 border border-green-500/20">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-white">Peak Hour Analytics</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Visualize your busiest hours with beautiful charts. Know exactly when to over-staff the kitchen and when to prep.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-24 bg-[#0A0A0A] border-t border-gray-900 z-10">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-extrabold mb-4">Simple, Transparent Pricing</h2>
+            <p class="text-gray-400 text-lg">Start for free, upgrade when you need superpowers.</p>
+        </div>
+        
+        <div class="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-8">
+            <!-- Free Plan -->
+            <div class="glass-card rounded-3xl p-10 relative">
+                <h3 class="text-2xl font-bold text-gray-300 mb-2">Starter</h3>
+                <div class="flex items-baseline gap-2 mb-6">
+                    <span class="text-5xl font-extrabold">₹0</span>
+                    <span class="text-gray-500">/ forever</span>
+                </div>
+                <p class="text-gray-400 mb-8 pb-8 border-b border-gray-800">Perfect for small cafes and food trucks starting their digital journey.</p>
+                
+                <ul class="space-y-4 mb-10">
+                    <li class="flex items-center gap-3 text-gray-300"><svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Single Digital Menu</li>
+                    <li class="flex items-center gap-3 text-gray-300"><svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Standard QR Code</li>
+                    <li class="flex items-center gap-3 text-gray-300"><svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Basic Analytics</li>
+                </ul>
+                <a href="/auth/login/google" class="block w-full text-center bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition">Get Started</a>
+            </div>
+            
+            <!-- Pro Plan -->
+            <div class="bg-gray-900 border border-[#BC2F32]/50 rounded-3xl p-10 relative shadow-[0_0_40px_rgba(188,47,50,0.15)] overflow-hidden">
+                <div class="absolute top-0 right-0 bg-[#BC2F32] text-white text-xs font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">Most Popular</div>
+                <h3 class="text-2xl font-bold text-[#BC2F32] mb-2">Pro</h3>
+                <div class="flex items-baseline gap-2 mb-6">
+                    <span class="text-5xl font-extrabold text-white">₹1,499</span>
+                    <span class="text-gray-500">/ month</span>
+                </div>
+                <p class="text-gray-400 mb-8 pb-8 border-b border-gray-800">For active restaurants needing live KDS and advanced menu management.</p>
+                
+                <ul class="space-y-4 mb-10">
+                    <li class="flex items-center gap-3 text-white"><svg class="w-5 h-5 text-[#BC2F32]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Live Kitchen Display System (KDS)</li>
+                    <li class="flex items-center gap-3 text-white"><svg class="w-5 h-5 text-[#BC2F32]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Instant Stock "Kill Switch"</li>
+                    <li class="flex items-center gap-3 text-white"><svg class="w-5 h-5 text-[#BC2F32]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Bulk QR PDF Generator & Custom Logo</li>
+                    <li class="flex items-center gap-3 text-white"><svg class="w-5 h-5 text-[#BC2F32]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Peak Hour Analytics Charts</li>
+                </ul>
+                <a href="/auth/login/google" class="block w-full text-center bg-[#BC2F32] hover:bg-red-700 text-white font-bold py-3 rounded-xl transition shadow-[0_5px_15px_rgba(188,47,50,0.4)]">Upgrade to Pro</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="p-8 text-center text-gray-600 border-t border-gray-900 bg-[#050505] z-10">
+        <div class="mb-4 text-xl font-bold text-gray-500">QR<span class="crimson-accent opacity-50">Snap</span></div>
+        &copy; 2026 QRSnap Inc. Built with Python & Antigravity.
+    </footer>
+</body>
+</html>

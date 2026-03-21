@@ -203,8 +203,218 @@ async def customer_menu(request: Request, restaurant_id: str, table: str = "1", 
     })
 
 @app.get("/dashboard", response_class=HTMLResponse)
-async def dashboard(request: Request):
-    return templates.TemplateResponse("dashboard.html", {"request": request})
+async def dashboard(request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get("qrsnap_token")
+    restaurant_name = "Demo Restaurant"
+    r_id = "demo"
+    if token:
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            r_id = payload.get("restaurant_id")
+            r_uuid = uuid.UUID(r_id)
+            res = db.query(Restaurant).filter(Restaurant.id == r_uuid).first()
+            if res: restaurant_name = res.name
+        except:
+            pass
+    return templates.TemplateResponse("dashboard.html", {"request": request, "restaurant_name": restaurant_name, "restaurant_id": r_id})
+
+@app.get("/api/dashboard/stats")
+async def get_dashboard_stats(request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get("qrsnap_token")
+    if not token:
+        return {"revenue": 14500, "active_orders": 12, "qr_scans": 84, "peak_hours": [10, 25, 40, 50, 90, 40, 20]}
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        r_uuid = uuid.UUID(payload.get("restaurant_id"))
+    except:
+        return {"revenue": 0, "active_orders": 0, "qr_scans": 0, "peak_hours": [0]*7}
+        
+    orders = db.query(Order).filter(Order.restaurant_id == r_uuid).all()
+    revenue = sum(o.total_price for o in orders if o.status == "done")
+    active = sum(1 for o in orders if o.status == "pending")
+    # Mocking peak hours and scans for now based on total orders
+    base_scans = len(orders) * 3 if orders else 15
+    return {
+        "revenue": revenue,
+        "active_orders": active,
+        "qr_scans": base_scans,
+        "peak_hours": [5, 12, 18, 45, 80, 55, 20] # Beautiful bell curve for ChartJS
+    }
+
+@app.get("/auth/mock-login")
+async def mock_login(request: Request, db: Session = Depends(get_db)):
+    email = "test@owner.com"
+    restaurant = db.query(Restaurant).filter(Restaurant.owner_email == email).first()
+    if not restaurant:
+        restaurant = Restaurant(name="Mock Restaurant", owner_email=email, hashed_password="mock", secret_salt=uuid.uuid4().hex)
+        db.add(restaurant)
+        db.commit()
+        db.refresh(restaurant)
+    
+    access_token = create_access_token(data={"sub": email, "restaurant_id": str(restaurant.id)}, expires_delta=timedelta(days=7))
+    response = RedirectResponse(url="/dashboard")
+    response.set_cookie(key="qrsnap_token", value=access_token, httponly=True)
+    return response
+
+# --- MENU MANAGER ROUTES ---
+class MenuItemReq(BaseModel):
+    name: str
+    price: float
+    category: str
+    is_veg: bool
+
+@app.get("/menu-manager", response_class=HTMLResponse)
+async def menu_manager(request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get("qrsnap_token")
+    if not token:
+        return RedirectResponse(url="/")
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        r_uuid = uuid.UUID(payload.get("restaurant_id"))
+    except:
+        return RedirectResponse(url="/")
+    
+    restaurant = db.query(Restaurant).filter(Restaurant.id == r_uuid).first()
+    items = db.query(MenuItem).filter(MenuItem.restaurant_id == r_uuid).all()
+    # Sort by category for UI
+    from collections import defaultdict
+    categorized_items = defaultdict(list)
+    for i in items:
+        categorized_items[i.category].append(i)
+        
+    return templates.TemplateResponse("menu_manager.html", {
+        "request": request, 
+        "restaurant_id": str(r_uuid), 
+        "restaurant_name": restaurant.name, 
+        "categories": dict(categorized_items)
+    })
+
+@app.post("/api/menu")
+async def add_menu_item(request: Request, item: MenuItemReq, db: Session = Depends(get_db)):
+    token = request.cookies.get("qrsnap_token")
+    if not token: raise HTTPException(status_code=401)
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        r_uuid = uuid.UUID(payload.get("restaurant_id"))
+    except: raise HTTPException(status_code=401)
+    
+    new_item = MenuItem(restaurant_id=r_uuid, name=item.name, price=item.price, category=item.category, is_veg=item.is_veg, is_available=True)
+    db.add(new_item)
+    db.commit()
+    db.refresh(new_item)
+    return {"status": "success", "item": {"id": str(new_item.id), "name": new_item.name, "price": new_item.price}}
+
+@app.put("/api/menu/{item_id}/toggle-availability")
+async def toggle_availability(item_id: str, request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get("qrsnap_token")
+    if not token: raise HTTPException(status_code=401)
+    try: i_uuid = uuid.UUID(item_id)
+    except: raise HTTPException(status_code=400)
+    
+    menu_item = db.query(MenuItem).filter(MenuItem.id == i_uuid).first()
+    if not menu_item: raise HTTPException(status_code=404)
+    
+    menu_item.is_available = not menu_item.is_available
+    db.commit()
+    return {"status": "success", "is_available": menu_item.is_available}
+
+@app.delete("/api/menu/{item_id}")
+async def delete_menu_item(item_id: str, request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get("qrsnap_token")
+    if not token: raise HTTPException(status_code=401)
+    try: i_uuid = uuid.UUID(item_id)
+    except: raise HTTPException(status_code=400)
+    
+    menu_item = db.query(MenuItem).filter(MenuItem.id == i_uuid).first()
+    if menu_item:
+        db.delete(menu_item)
+        db.commit()
+    return {"status": "success"}
+
+# --- BULK QR GENERATOR ROUTES ---
+@app.get("/qr-generator", response_class=HTMLResponse)
+async def qr_generator_page(request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get("qrsnap_token")
+    if not token: return RedirectResponse(url="/")
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        r_uuid = uuid.UUID(payload.get("restaurant_id"))
+    except: return RedirectResponse(url="/")
+    
+    restaurant = db.query(Restaurant).filter(Restaurant.id == r_uuid).first()
+    return templates.TemplateResponse("qr_generator.html", {"request": request, "restaurant_id": str(r_uuid), "restaurant_name": restaurant.name})
+
+@app.get("/print-qr", response_class=HTMLResponse)
+async def print_qr(request: Request, count: int = 10, db: Session = Depends(get_db)):
+    token = request.cookies.get("qrsnap_token")
+    if not token: return RedirectResponse(url="/")
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        r_uuid = uuid.UUID(payload.get("restaurant_id"))
+    except: return RedirectResponse(url="/")
+    
+    restaurant = db.query(Restaurant).filter(Restaurant.id == r_uuid).first()
+    if not restaurant: return RedirectResponse(url="/")
+    
+    import base64
+    tables = []
+    
+    # We will use the base_url for the generated QR links
+    base_url = str(request.base_url).rstrip('/')
+    
+    for i in range(1, count + 1):
+        table_no = str(i)
+        sig = generate_qr_signature(str(r_uuid), table_no, restaurant.secret_salt)
+        url = f"{base_url}/order/{str(r_uuid)}?table={table_no}&sig={sig}"
+        
+        qr = qrcode.QRCode(version=1, box_size=10, border=1)
+        qr.add_data(url)
+        qr.make(fit=True)
+        img = qr.make_image(fill_color="#BC2F32", back_color="white")
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        b64 = base64.b64encode(buf.getvalue()).decode('utf-8')
+        tables.append({"number": table_no, "qr_b64": b64})
+        
+    return templates.TemplateResponse("qr_print.html", {"request": request, "restaurant_name": restaurant.name, "tables": tables})
+
+# --- SETTINGS ROUTES ---
+@app.get("/settings", response_class=HTMLResponse)
+async def settings_page(request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get("qrsnap_token")
+    if not token: return RedirectResponse(url="/")
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        r_uuid = uuid.UUID(payload.get("restaurant_id"))
+        email = payload.get("sub")
+    except: return RedirectResponse(url="/")
+    
+    restaurant = db.query(Restaurant).filter(Restaurant.id == r_uuid).first()
+    return templates.TemplateResponse("settings.html", {
+        "request": request, 
+        "restaurant_name": restaurant.name, 
+        "email": email
+    })
+
+@app.post("/api/settings/update")
+async def update_settings(request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get("qrsnap_token")
+    if not token: return RedirectResponse(url="/")
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        r_uuid = uuid.UUID(payload.get("restaurant_id"))
+    except: return RedirectResponse(url="/")
+    
+    restaurant = db.query(Restaurant).filter(Restaurant.id == r_uuid).first()
+    if not restaurant: return RedirectResponse(url="/")
+    
+    form = await request.form()
+    new_name = form.get("restaurant_name")
+    if new_name:
+        restaurant.name = new_name
+        db.commit()
+        
+    return RedirectResponse(url="/settings", status_code=303)
 
 @app.get("/kds/{restaurant_id}", response_class=HTMLResponse)
 async def kds_display(request: Request, restaurant_id: str, db: Session = Depends(get_db)):
